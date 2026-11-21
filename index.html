@@ -1,0 +1,170 @@
+<!doctype html>
+<html lang="en-GB">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover, user-scalable=no" />
+<title>KNOCKOUT — a digital exhibition concept (unofficial demo)</title>
+<meta name="description" content="Unofficial concept demo by Dammy Ojo / Forma Digital: a walkable digital exhibition with a single-player boxing tournament and a hidden pin hunt." />
+<meta name="robots" content="noindex" />
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 64 64%22%3E%3Crect width=%2264%22 height=%2264%22 rx=%2212%22 fill=%22%23ff2a1a%22/%3E%3Ctext x=%2232%22 y=%2244%22 font-family=%22Arial Black%22 font-size=%2230%22 fill=%22%23ffd400%22 text-anchor=%22middle%22%3EKO%3C/text%3E%3C/svg%3E" />
+<meta name="theme-color" content="#111111" />
+  <script type="module" crossorigin src="./assets/index-Pfv-t6IE.js"></script>
+  <link rel="stylesheet" crossorigin href="./assets/index-Dn2GLSsV.css">
+</head>
+<body class="mode-loading">
+<canvas id="scene" tabindex="0" aria-label="3D exhibition"></canvas>
+
+<div class="banner" id="banner" role="note"><strong>Unofficial concept demo</strong> by Dammy Ojo / Forma Digital — not affiliated with or endorsed by Olaolu Slawn, Saatchi Yates or Corteiz. No purchases are processed here; links go to official stores.</div>
+
+<header class="hud" id="hud">
+  <div class="brand"><span class="ko">KNOCKOUT</span><span class="sub">digital exhibition · concept</span></div>
+  <nav class="zones" id="zones" aria-label="Go to">
+    <button data-zone="entrance">Entrance</button><button data-zone="art">Art</button><button data-zone="rail">The Rail</button><button data-zone="ring" class="hot">The Ring</button>
+  </nav>
+  <div class="hud-right">
+    <button class="pins" id="pinsBtn" title="Pin hunt clues">📍 <span id="pinCount">0</span>/3</button>
+    <button class="icon" id="muteBtn" title="Sound on/off" aria-label="Toggle sound">🔊</button>
+    <button class="icon" id="menuBtn" aria-label="Menu" title="Menu">☰</button>
+  </div>
+</header>
+<p class="hint" id="hint">WASD / arrow keys to walk · drag to look · click the floor to walk there · click any work</p>
+<button class="ring-cta" id="ringCta" type="button">🥊 Enter the ring</button>
+<div class="joy" id="joy" aria-hidden="true"><div class="knob"></div></div>
+<div class="toast" id="toast" role="status"></div>
+<div class="flash" id="flash"></div><div class="fade" id="fade"></div>
+<div class="wipe" id="wipe"><span>FIGHT NIGHT</span></div>
+
+<!-- Arrival -->
+<section class="overlay intro" id="intro">
+  <div class="intro-card">
+    <p class="eyebrow">Unofficial concept demo · Dammy Ojo / Forma Digital</p>
+    <h1><span>KNOCKOUT</span></h1>
+    <p class="lede">A one-day global digital exhibition — art on the walls, streetwear on the rail, and a boxing tournament in the middle of the room.</p>
+    <ul class="how"><li><b>Walk</b> WASD / arrows, drag to look, or tap the floor</li><li><b>Look closer</b> click any artwork or garment</li><li><b>Hunt</b> three hidden pins — clues by the door</li><li><b>Fight</b> step into the ring: 16 fighters, 4 rounds to win</li></ul>
+    <button class="btn primary" id="enterBtn" type="button" disabled>Loading the exhibition…</button>
+    <p class="fine">All artworks and garments are original placeholders made for this demo. Real works are subject to permission. Not affiliated with or endorsed by Olaolu Slawn, Saatchi Yates or Corteiz.</p>
+  </div>
+</section>
+
+<!-- Info panel -->
+<aside class="panel" id="panel" aria-hidden="true" role="dialog" aria-labelledby="pTitle">
+  <button class="close" id="panelClose" aria-label="Close">✕</button>
+  <div class="p-media" id="pMedia"></div>
+  <div class="p-body">
+    <p class="eyebrow" id="pKind"></p>
+    <h2 id="pTitle"></h2>
+    <p class="p-note" id="pNote"></p>
+    <p class="p-desc" id="pDesc"></p>
+    <a class="btn primary ext" id="pLink" target="_blank" rel="noopener noreferrer"></a>
+    <p class="ext-label" id="pExt"></p>
+    <p class="p-meta" id="pMeta"></p>
+  </div>
+</aside>
+
+<!-- Menu -->
+<section class="overlay menu" id="menu" aria-hidden="true">
+  <div class="menu-card">
+    <button class="close" data-close="menu" aria-label="Close">✕</button>
+    <h2>Menu</h2>
+    <button class="btn" id="mResume">Resume</button>
+    <button class="btn" id="mClues">Pin hunt clues</button>
+    <button class="btn" id="mBracket">Tournament bracket</button>
+    <button class="btn" id="mAbout">About this demo</button>
+    <button class="btn danger" data-restart>↺ Restart Experience</button>
+  </div>
+</section>
+
+<section class="overlay sheet" id="clues" aria-hidden="true">
+  <div class="sheet-card">
+    <button class="close" data-close="clues" aria-label="Close">✕</button>
+    <p class="eyebrow">Route B · the pin hunt</p><h2>Three hidden pins</h2>
+    <ol id="clueList"></ol>
+    <p class="fine">In the full concept, clues release at set times for everyone at once and solves are verified server-side. Here, just explore.</p>
+  </div>
+</section>
+
+<section class="overlay sheet" id="about" aria-hidden="true">
+  <div class="sheet-card">
+    <button class="close" data-close="about" aria-label="Close">✕</button>
+    <h2>About this demo</h2>
+    <p>A small-scale, single-player prototype of a concept by <b>Dammy Ojo / Forma Digital</b>: a paid, one-day global digital exhibition with two skill-based competition routes — a boxing tournament and a hidden-pin hunt.</p>
+    <p><b>Unofficial.</b> Not affiliated with or endorsed by Olaolu Slawn, Saatchi Yates or Corteiz. All artworks are original generative placeholders; real works are subject to permission. Garments are generic streetwear in inspired colourways — no logos or product photos. No purchases are processed here; store links go to official sites and do not imply any partnership.</p>
+    <p><b>Credits.</b> 3D characters and animations: Quaternius "Universal Base Characters" and "Universal Animation Library" (CC0 1.0). Fonts: Bungee, Permanent Marker, Inter (SIL Open Font License). Built with three.js (MIT). All sounds synthesised in the browser.</p>
+  </div>
+</section>
+
+<!-- Fighter select -->
+<section class="overlay select" id="select" aria-hidden="true">
+  <div class="sel-card">
+    <p class="eyebrow">Step 1 · Your fighter</p>
+    <h2>Pick &amp; customise</h2>
+    <div class="starters" id="starters"></div>
+    <label class="name-row">Name <input id="pName" maxlength="14" value="DAMMY" /></label>
+    <div class="custom" id="custom"></div>
+    <p class="fine">Corteiz-inspired fit (concept) · no logos or trademarks.</p>
+    <div class="sel-actions">
+      <button class="btn" id="selBack">← Back to gallery</button>
+      <button class="btn primary" id="selGo">Enter the tournament →</button>
+    </div>
+  </div>
+</section>
+
+<!-- Bracket -->
+<section class="overlay bracket" id="bracket" aria-hidden="true">
+  <div class="br-card">
+    <div class="br-head"><div><p class="eyebrow" id="brEyebrow">16 fighters · single elimination</p><h2 id="brTitle">The bracket</h2></div><p class="br-next" id="brNext"></p></div>
+    <div class="br-grid" id="brGrid"></div>
+    <div class="br-actions">
+      <button class="btn" id="brGallery">Back to gallery</button>
+      <button class="btn danger" data-restart>↺ Restart Experience</button>
+      <button class="btn primary" id="brFight">Fight →</button>
+    </div>
+  </div>
+</section>
+
+<!-- Fight HUD -->
+<section class="fighthud" id="fighthud" aria-hidden="true">
+  <div class="fh-top">
+    <div class="fh-side l"><div class="fh-name" id="fhPName"></div><div class="bar hp"><i class="trail" id="fhPTrail"></i><i id="fhPHp"></i></div><div class="bar sp"><i id="fhPSp"></i></div></div>
+    <div class="fh-mid"><div class="fh-round" id="fhRound">R1</div><div class="fh-timer" id="fhTimer">30</div></div>
+    <div class="fh-side r"><div class="fh-name" id="fhCName"></div><div class="bar hp"><i class="trail" id="fhCTrail"></i><i id="fhCHp"></i></div><div class="bar sp"><i id="fhCSp"></i></div></div>
+  </div>
+  <div class="announce" id="announce"></div>
+  <div class="pops" id="pops"></div>
+  <p class="fh-keys" id="fhKeys">Move <b>A/D</b> · Jab <b>J</b> · Hook <b>K</b> · Block <b>hold L</b> · Dodge <b>Q/E</b> · Special <b>Space</b></p>
+  <div class="pad" id="pad">
+    <div class="pad-move"><button data-k="left" aria-label="Move left">◀</button><button data-k="right" aria-label="Move right">▶</button></div>
+    <div class="pad-act">
+      <button data-k="dodgeL" class="sm">Dodge L</button><button data-k="dodgeR" class="sm">Dodge R</button>
+      <button data-k="block" class="blk">Block</button><button data-k="jab">Jab</button><button data-k="hook">Hook</button>
+      <button data-k="special" class="spc" id="spBtn">Special</button>
+    </div>
+  </div>
+  <button class="fh-quit" id="fhQuit">✕ Quit fight</button>
+</section>
+
+<!-- Result -->
+<section class="overlay result" id="result" aria-hidden="true">
+  <div class="res-card">
+    <h2 id="resTitle"></h2><p id="resSub"></p>
+    <div class="res-actions" id="resActions"></div>
+  </div>
+</section>
+
+<!-- Champion -->
+<section class="overlay champion" id="champion" aria-hidden="true">
+  <canvas id="confetti"></canvas>
+  <div class="ch-card">
+    <p class="eyebrow">Tournament complete</p>
+    <h2>CHAMPION</h2>
+    <div class="ch-who"><img id="chImg" alt="" /><div><b id="chName"></b><span id="chSub"></span></div></div>
+    <h3>Concept prizes <small>(illustrative — nothing is awarded in this demo)</small></h3>
+    <table class="prizes" id="prizeTable"></table>
+    <p class="fine">Prize ladder from the concept proposal. Painting sizes and values to be agreed with the artist and gallery. Skill-based competition — no prize draw, raffle or lottery.</p>
+    <div class="ch-actions"><button class="btn" id="chBracket">View bracket</button><button class="btn" id="chGallery">Back to gallery</button><button class="btn danger" data-restart>↺ Restart Experience</button></div>
+  </div>
+</section>
+
+<footer class="foot" id="foot">Unofficial concept demo by Dammy Ojo / Forma Digital · not affiliated with or endorsed by Olaolu Slawn, Saatchi Yates or Corteiz · no purchases processed · placeholder artworks · 3D characters & animations by Quaternius (CC0)</footer>
+</body>
+</html>
